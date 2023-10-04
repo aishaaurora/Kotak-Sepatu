@@ -1,0 +1,5 @@
+﻿  box.cpp
+D:\TUGAS\VSC\dump\Test-Envi\ExperimenterSource\Chapter4\Kotak Sepatu\box.cpp(28,25): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+D:\TUGAS\VSC\dump\Test-Envi\ExperimenterSource\Chapter4\Kotak Sepatu\box.cpp(34,25): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+D:\TUGAS\VSC\dump\Test-Envi\ExperimenterSource\Chapter4\Kotak Sepatu\box.cpp(35,52): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+  Box.vcxproj -> D:\TUGAS\VSC\dump\Test-Envi\ExperimenterSource\Chapter4\Kotak Sepatu\Debug\Box.exe
