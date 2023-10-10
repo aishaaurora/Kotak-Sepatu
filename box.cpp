@@ -12,6 +12,10 @@
 #include <GL/freeglut.h> 
 
 // Drawing routine.
+
+float rotationAngle = 0.0f; // Sudut rotasi awal.
+float rotationSpeed = 0.01f; // Kecepatan rotasi.
+
 void drawScene(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -24,28 +28,32 @@ void drawScene(void)
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
 	glEnable(GL_LIGHT0);
 
-
 	glColor3f(0.7, 0.4, 0.1);
 	glLoadIdentity();
 
+	// Perbarui sudut rotasi.
+	rotationAngle += rotationSpeed;
+
 	// Modeling transformations.
 	glTranslatef(0.0, -3.0, -20.0);
-	glRotatef(20, 0.0, 1.0, 0.0);
+	glRotatef(rotationAngle, 0.0, 1.0, 0.0); // Terapkan rotasi.
 	glScalef(3.0, 0.05, 1.0);
 	GLfloat material_diffuse[] = { 0.7, 0.7, 0.7, 1.0 };
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material_diffuse);
 	glutSolidCube(5.0); // Box.
-	//glutWireTeapot(5.0);
-	
+
 	for (int i = 0; i < 3; i++) {
 		glTranslatef(0.0, 40.0, 0.0);
 		glutSolidCube(5.0); // Kubus tambahan.
 	}
 
-
 	glDisable(GL_LIGHTING);
 
 	glFlush();
+	glutSwapBuffers();
+
+	// Pemicu ulang penggambaran (redisplay) setiap frame.
+	glutPostRedisplay();
 }
 
 // Initialization routine.
