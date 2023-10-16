@@ -17,12 +17,14 @@
 
 // Drawing routine.
 
-float rotationAngle = 0.0f; // Sudut rotasi awal.
-float rotationSpeed = 0.0f; // Kecepatan rotasi.
-float _angle = -70.0f;  // Sudut awal rotasi meja
+float rotationAngle = 0.0f;
+float rotationSpeed = 0.0f; // Inisialisasi kecepatan rotasi
+int prevX = 0, prevY = 0;
+bool mouseRotate = false;
 
 void drawFrameKanan(void)
 {
+	glPushMatrix();
 	glColor3f(0.28, 0.16, 0.14);
 	glTranslatef(5.1, -60.0, -20.0);
 	glRotatef(rotationAngle, 0.0, 1.0, 0.0); // Terapkan rotasi.
@@ -30,6 +32,8 @@ void drawFrameKanan(void)
 	GLfloat material_diffuse[] = { 0.7, 0.7, 0.7, 1.0 };
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material_diffuse);
 	glutSolidCube(5.0); // Box.
+	glPopMatrix();
+
 }
 
 void drawFrameKiri(void)
@@ -123,6 +127,15 @@ void resize(int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 }
 
+void update(int value) {
+	rotationAngle += 1.5f;  // Tingkat rotasi
+	if (rotationAngle > 360) {
+		rotationAngle -= 360;  // Reset sudut rotasi setelah melebihi 360 derajat
+	}
+	glutPostRedisplay();  // Meminta tampilan ulang jendela
+	glutTimerFunc(25, update, 0);  // Atur timer untuk memanggil fungsi update lagi
+}
+
 // Keyboard input processing routine.
 void keyInput(unsigned char key, int x, int y)
 {
@@ -136,16 +149,25 @@ void keyInput(unsigned char key, int x, int y)
 	}
 }
 
-void update(int value) {
-	_angle += 1.5f;  // Tingkat rotasi
-	if (_angle > 360) {
-		_angle -= 360;  // Reset sudut rotasi setelah melebihi 360 derajat
+void mouse(int button, int state, int x, int y) {
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+		prevX = x;
+		prevY = y;
+		mouseRotate = true;
 	}
-
-	glutPostRedisplay();  // Meminta tampilan ulang jendela
-	glutTimerFunc(25, update, 0);  // Atur timer untuk memanggil fungsi update lagi
+	else {
+		mouseRotate = false;
+	}
 }
 
+void motion(int x, int y) {
+	if (mouseRotate) {
+		int deltaX = x - prevX;
+		rotationAngle += deltaX;
+		prevX = x;
+		glutPostRedisplay();
+	}
+}
 // Main routine.
 int main(int argc, char **argv)
 {
@@ -167,7 +189,11 @@ int main(int argc, char **argv)
 
 	setup();
 
-	update(0);
+	glutMouseFunc(mouse);
+	glutMotionFunc(motion);
+	glutTimerFunc(25, update, 0);
+	//update(0);
 	glutMainLoop();
+	return 0;
 }
 
