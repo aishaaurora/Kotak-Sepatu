@@ -10,6 +10,7 @@
 
 // Drawing routine.
 
+float rotationAngleX = 0.0f, rotationAngleY = 0.0f, rotationAngleZ = 0.0f;
 float rotationAngle = 0.0f;
 float rotationSpeed = 0.0f;
 int prevX = 0, prevY = 0;
@@ -59,7 +60,7 @@ void drawTumpukanRak(void)
     glColor3f(0.18, 0.16, 0.14);
     // Modeling transformations.
     glTranslatef(0.0, -3.0, -20.0);
-    glRotatef(rotationAngle, 0.0, 1.0, 0.0); // Terapkan rotasi.
+    glRotatef(rotationAngle, 1.0, 1.0, 1.0); // Terapkan rotasi.
     glScalef(3.0, 0.05, 1.0);
     GLfloat material_diffuse[] = { 0.7, 0.7, 0.7, 1.0 };
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material_diffuse);
@@ -84,6 +85,11 @@ void drawScene(void)
     glEnable(GL_LIGHT0);
 
     glLoadIdentity();
+
+    glTranslatef(0.0f, 0.0f, 0.0f);
+    glRotatef(rotationAngleX, 1.0f, 0.0f, 0.0f);
+    glRotatef(rotationAngleY, 0.0f, 1.0f, 0.0f);
+    glRotatef(rotationAngleZ, 0.0f, 0.0f, 1.0f);
 
     // Perbarui sudut rotasi.
     rotationAngle += rotationSpeed;
@@ -148,10 +154,16 @@ void motion(int x, int y) {
     if (mouseRotate) {
         int deltaX = x - prevX;
         int deltaY = y - prevY;
+
         rotationAngle += deltaX;
-        prevX = x;
         rotationAngle += deltaY;
+        
+        rotationAngleX = fmod(rotationAngleX, 360.0f);
+        rotationAngleY = fmod(rotationAngleY, 360.0f);
+
+        prevX = x;
         prevY = y;
+        
         glutPostRedisplay();
     }
 }
