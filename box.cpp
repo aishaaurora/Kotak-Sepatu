@@ -1,4 +1,4 @@
-//Adyatma Dyma
+//Ahamd Adyatma Akbar
 //Aisha Aurora 
 
 #include <iostream>
@@ -15,6 +15,7 @@ float rotationAngle = 0.0f;
 float rotationSpeed = 0.0f;
 int prevX = 0, prevY = 0;
 bool mouseRotate = false;
+bool rotateXAxis = true;
 
 void drawFrameKanan(void)
 {
@@ -58,10 +59,12 @@ void drawFrameBlkg(void)
 void drawTumpukanRak(void)
 {
     glColor3f(0.18, 0.16, 0.14);
+
     // Modeling transformations.
-    glTranslatef(0.0, -3.0, -20.0);
-    glRotatef(rotationAngle, 1.0, 1.0, 1.0); // Terapkan rotasi.
-    glScalef(3.0, 0.05, 1.0);
+	glTranslatef(0.0, -3.0, -20.0);
+	glRotatef(rotationAngleX, 1.0, 0.0, 0.0);  // Rotate around X-axis.
+	glRotatef(rotationAngleY, 0.0, 1.0, 0.0);  // Rotate around Y-axis.
+	glScalef(3.0, 0.05, 1.0);
     GLfloat material_diffuse[] = { 0.7, 0.7, 0.7, 1.0 };
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material_diffuse);
     glutSolidCube(5.0); // Box.
@@ -76,6 +79,10 @@ void drawScene(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	gluLookAt(rotationAngleX, rotationAngleY, rotationAngleZ,  // eye position
+		0.0, 0.0, 0.0,  // look at position
+		0.0, 1.0, 0.0);  // up vector
+
     //glEnable(GL_LIGHTING);
     glShadeModel(GL_SMOOTH);
     GLfloat light_position[] = { 0.0, 10.0, 0.0, 1.0 };
@@ -87,9 +94,9 @@ void drawScene(void)
     glLoadIdentity();
 
     glTranslatef(0.0f, 0.0f, 0.0f);
-    glRotatef(rotationAngleX, 1.0f, 0.0f, 0.0f);
-    glRotatef(rotationAngleY, 0.0f, 1.0f, 0.0f);
-    glRotatef(rotationAngleZ, 0.0f, 0.0f, 1.0f);
+   // glRotatef(rotationAngleX, 1.0f, 0.0f, 0.0f);
+    //glRotatef(rotationAngleY, 0.0f, 1.0f, 0.0f);
+    //glRotatef(rotationAngleZ, 0.0f, 0.0f, 1.0f);
 
     // Perbarui sudut rotasi.
     rotationAngle += rotationSpeed;
@@ -138,34 +145,47 @@ void keyInput(unsigned char key, int x, int y)
 }
 
 void mouse(int button, int state, int x, int y) {
-    if (button == GLUT_LEFT_BUTTON) {
-        if (state == GLUT_DOWN) {
-            prevX = x;
-            prevY = y;
-            mouseRotate = true;
-        }
-        else if (state == GLUT_UP) {
-            mouseRotate = false;
-        }
-    }
+	if (state == GLUT_DOWN) {
+		prevX = x;
+		prevY = y;
+
+		if (button == GLUT_RIGHT_BUTTON) {
+			// Left mouse button clicked
+			mouseRotate = true;
+			rotateXAxis = true;
+		}
+		else if (button == GLUT_LEFT_BUTTON) {
+			// Right mouse button clicked
+			mouseRotate = true;
+			rotateXAxis = false;
+		}
+	}
+	else if (state == GLUT_UP) {
+		mouseRotate = false;
+	}
 }
 
 void motion(int x, int y) {
-    if (mouseRotate) {
-        int deltaX = x - prevX;
-        int deltaY = y - prevY;
+	if (mouseRotate) {
+		int deltaX = x - prevX;
+		int deltaY = y - prevY;
 
-        rotationAngle += deltaX;
-        rotationAngle += deltaY;
-        
-        rotationAngleX = fmod(rotationAngleX, 360.0f);
-        rotationAngleY = fmod(rotationAngleY, 360.0f);
+		if (rotateXAxis) {
+			// Rotate around the X-axis
+			rotationAngleX += deltaY;
+			rotationAngleX = fmod(rotationAngleX, 360.0f);
+		}
+		else {
+			// Rotate around the Y-axis
+			rotationAngleY += deltaX;
+			rotationAngleY = fmod(rotationAngleY, 360.0f);
+		}
 
-        prevX = x;
-        prevY = y;
-        
-        glutPostRedisplay();
-    }
+		prevX = x;
+		prevY = y;
+
+		glutPostRedisplay();
+	}
 }
 
 // Main routine.
